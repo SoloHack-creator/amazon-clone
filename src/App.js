@@ -8,8 +8,9 @@ import Header from './Header';
 import Home from './Home';
 import Login from './Login';
 import Payment from './Payment';
-import { auth } from './firebase';
+import { auth, db } from './firebase';
 import { useStateValue } from './StateProvider';
+import Orders from './Orders';
 
 const promise = loadStripe(
   'pk_test_51HWz3SENAdZts6RnvgAYsP3IHlDk1WugTxQOvpdPNyKsxYL07q8ndWsEUJO2Dn0Wy2zXgGKG2O5Et9C7BWCoEDbR008BwgelSo'
@@ -47,6 +48,10 @@ function App() {
     <Router>
       <div className="App">
         <Switch>
+          <Route path="/orders">
+            <Header />
+            <Orders />
+          </Route>
           <Route path="/checkout">
             <Header />
             <Checkout />

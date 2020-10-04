@@ -7,6 +7,7 @@ import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import CurrencyFormat from 'react-currency-format';
 import { getBasketTotal } from './reducer';
 import axios from './axios';
+import { db } from './firebase';
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
@@ -24,8 +25,11 @@ function Payment() {
       const response = await axios({
         //  ! this url is created by application
         method: 'post',
-        url: `payments/create?total=${getBasketTotal(basket) * 100}`,
+        url: `payments/create?total=${getBasketTotal(basket) * 100}&email=${
+          user?.email
+        }`,
       });
+      console.log('email', { user });
       console.log('clientSecret', response);
       setClientSecret(response.data.clientSecret);
     };
@@ -46,6 +50,15 @@ function Payment() {
         },
       })
       .then(({ paymentIntent }) => {
+        db.collection('users')
+          .doc(user?.uid)
+          .collection('orders')
+          .doc(paymentIntent?.id)
+          .set({
+            basket: basket,
+            amount: paymentIntent.amount,
+            created: paymentIntent.created,
+          });
         setsucceeded(true);
         setError(null);
         setProcessing(false);
@@ -74,9 +87,13 @@ function Payment() {
 
           <div className="payment__address">
             <p>{user?.email}</p>
-            <p>LA experience</p>
-            <p>24th street</p>
-            <p>CA </p>
+            <p>
+              <small>The JRE Experience </small>
+            </p>
+
+            <p>47 Dapplegray Rd</p>
+            <p>Bell Canyon</p>
+            <p>CA 91307 </p>
           </div>
         </div>
         <div className="payment__section">
@@ -101,7 +118,10 @@ function Payment() {
           </div>
           <div className="payment__details">
             <form onSubmit={handleSubmit}>
-              <CardElement onChange={handleChange} />
+              <CardElement
+                classname="payment__cardelement"
+                onChange={handleChange}
+              />
               <div className="payment__priceContainer">
                 <CurrencyFormat
                   renderText={(value) => <h3>Order Total : {value}</h3>}
@@ -109,11 +129,11 @@ function Payment() {
                   value={getBasketTotal(basket)}
                   displayType={'text'}
                   thousandSeparator={true}
-                  prefix={'$'}
+                  prefix={'₹ '}
                 />
 
                 <button disabled={processing || disabled || succeeded}>
-                  <span>{processing ? <p>processing</p> : 'Buy now'}</span>
+                  <span>{processing ? <p>processing</p> : 'PAY NOW'}</span>
                 </button>
               </div>
             </form>

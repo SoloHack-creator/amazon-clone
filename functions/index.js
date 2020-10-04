@@ -25,17 +25,20 @@ app.get('/', (request, response) => response.status(200).send('hello world'));
 app.post('/payments/create', async (request, response) => {
   console.log('inside  create');
   const total = request.query.total;
+  const email = request.query.email;
 
-  console.log('req recieved', total);
+  console.log('req recieved', total, email);
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: total,
     currency: 'inr',
+    receipt_email: 'ankit.mit1234@gmail.com',
   });
 
   console.log('paymentIntent,', paymentIntent);
   response.status(201).send({
     clientSecret: paymentIntent.client_secret,
+    // receipt_email: paymentIntent.email,
   });
 });
 

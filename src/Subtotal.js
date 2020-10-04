@@ -3,11 +3,14 @@ import './Subtotal.css';
 import { Link, useHistory } from 'react-router-dom';
 
 import CurrencyFormat from 'react-currency-format';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { getBasketTotal } from './reducer';
 import { useStateValue } from './StateProvider';
 
 function Subtotal() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [{ basket }, dispatch] = useStateValue();
   const history = useHistory();
   return (
@@ -28,7 +31,7 @@ function Subtotal() {
         value={getBasketTotal(basket)}
         displayType={'text'}
         thousandSeparator={true}
-        prefix={'$'}
+        prefix={'₹ '}
       />
 
       <button

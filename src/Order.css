@@ -1,0 +1,19 @@
+.order {
+  padding: 40px;
+  border: 1 px solid;
+  margin: 20px 0;
+  background-color: white;
+  position: relative;
+}
+
+.order__total {
+  top: 40px;
+  right: 20px;
+
+  position: absolute;
+}
+
+.order__id {
+  font-weight: 500;
+  text-align: right;
+}
